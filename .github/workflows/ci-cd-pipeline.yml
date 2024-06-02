@@ -29,17 +29,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: ${{ env.AWS_REGION }}
-        env:
-          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
 
       - name: Log in to Amazon ECR
         run: |
           aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
-        env:
-          AWS_REGION: ${{ env.AWS_REGION }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
 
       - name: Build and push Docker image
         run: |
@@ -49,23 +42,9 @@ jobs:
       - name: Configure kubectl
         run: |
           aws eks --region $AWS_REGION update-kubeconfig --name eks-cluster
-        env:
-          AWS_REGION: ${{ env.AWS_REGION }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
-
-      - name: Delete existing deployment
-        run: |
-          kubectl delete deployment flask-app || true
-        env:
-          AWS_REGION: ${{ env.AWS_REGION }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
 
       - name: Update Helm deployment
         run: |
           helm repo add eks https://aws.github.io/eks-charts
           helm repo update
-          helm upgrade --install flask-app ./flask-app-0.1.0.tgz --set image.repository=$ECR_REGISTRY/$ECR_REPOSITORY --set image.tag=$IMAGE_TAG
+          helm upgrade --install flask-app ./helm/flask-app-0.1.0.tgz --set image.repository=$ECR_REGISTRY/$ECR_REPOSITORY --set image.tag=$IMAGE_TAG

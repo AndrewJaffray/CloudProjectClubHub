@@ -8,6 +8,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
+ENV PYTHONPATH /app
+
 EXPOSE 80
 
 ENV FLASK_APP=main.py
