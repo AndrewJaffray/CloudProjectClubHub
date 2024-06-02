@@ -58,7 +58,6 @@ jobs:
 
       - name: Update Helm deployment
         run: |
-          cd flask-app
           helm repo add eks https://aws.github.io/eks-charts
           helm repo update
           helm upgrade --install flask-app ./helm/flask-app-0.1.0.tgz --set image.repository=$ECR_REGISTRY/$ECR_REPOSITORY --set image.tag=$IMAGE_TAG
