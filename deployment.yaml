@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: flask-app
-        image:  andrewjaffray/my-python-app:latest
+        image:  401650335237.dkr.ecr.us-east-1.amazonaws.com/my-python-app:latest
         ports:
         - containerPort: 80
         env:
